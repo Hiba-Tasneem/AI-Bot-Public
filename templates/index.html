@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Image Generator 💡</title>
+</head>
+<body>
+    <h1>AI Image Generator 💡</h1>
+    <label>Choose a model:</label>
+    <select id="model">
+        {% for model in models %}
+            <option value="{{ model }}">{{ model }}</option>
+        {% endfor %}
+    </select>
+    <br><br>
+    <input type="text" id="prompt" placeholder="Enter your prompt">
+    <button onclick="generate()">Generate</button>
+    <br><br>
+    <img id="result" style="max-width:500px; display:none;">
+
+    <script>
+        function generate() {
+            let model = document.getElementById("model").value;
+            let prompt = document.getElementById("prompt").value;
+
+            fetch("/generate_image", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({prompt: prompt, model: model})
+            })
+            .then(res => res.blob())
+            .then(blob => {
+                let img = document.getElementById("result");
+                img.src = URL.createObjectURL(blob);
+                img.style.display = "block";
+            })
+            .catch(err => alert("Error: " + err));
+        }
+    </script>
+</body>
+</html>
